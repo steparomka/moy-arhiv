@@ -249,7 +249,7 @@ const NOTES2=[
  {t:"Холоп",n:"Самый адекватный русский фильм."}
 ];
 const NOTEM={};NOTES2.forEach(o=>NOTEM[norm(o.t)]=o.n);
-const VIDEOS={"хорошобытьтихоней": ["videos/v001.mp4"], "бойцовскийклуб": ["videos/v002.mp4"], "мистеримиссиссмит": ["videos/v003.mp4"], "знакомьтесьджоблэк": ["videos/v004.mp4"], "шерлок": ["videos/v029.mp4"], "пиратыкарибскогоморя": ["videos/v006.mp4"], "человекпаук": ["videos/v007.mp4", "videos/v008.mp4"], "страх": ["videos/v009.mp4"], "вейн": ["videos/v010.mp4"], "середина90х": ["videos/v011.mp4"], "мистерробот": ["videos/v012.mp4"], "дневникбаскетболиста": ["videos/v013.mp4"], "титаник": ["videos/v032.mp4"], "моствтерабитию": ["videos/v033.mp4"], "круэлла": ["videos/v015.mp4"], "папеснова17": ["videos/v017.mp4", "videos/v018.mp4"], "гаррипоттер": ["videos/v019.mp4"], "волксуоллстрит": ["videos/v020.mp4"], "проектх": ["videos/v021.mp4"], "домстранныхдетей": ["videos/v022.mp4"], "чарлиишоколаднаяфабрика": ["videos/v023.mp4"], "каратепацан": ["videos/v024.mp4"], "лунатизм": ["videos/v025.mp4"], "унесённыепризраками": ["videos/v026.mp4"], "из13в30": ["videos/v027.mp4"], "500днейлета": ["videos/v028.mp4"], "простодобавьводы": ["videos/v030.mp4"], "останься": ["videos/v031.mp4"], "оно": ["videos/v034.mp4"]};
+const VIDEOS={"хорошобытьтихоней": ["videos/v001.mp4"], "бойцовскийклуб": ["videos/v002.mp4"], "мистеримиссиссмит": ["videos/v003.mp4"], "знакомьтесьджоблэк": ["videos/v004.mp4"], "шерлок": ["videos/v005.mp4"], "пиратыкарибскогоморя": ["videos/v006.mp4"], "человекпаук": ["videos/v007.mp4", "videos/v008.mp4"], "страх": ["videos/v009.mp4"], "вейн": ["videos/v010.mp4"], "середина90х": ["videos/v011.mp4"], "мистерробот": ["videos/v012.mp4"], "дневникбаскетболиста": ["videos/v013.mp4"], "титаник": ["videos/v031.mp4"], "моствтерабитию": ["videos/v032.mp4"], "круэлла": ["videos/v015.mp4", "videos/v016.mp4"], "папеснова17": ["videos/v017.mp4", "videos/v018.mp4"], "гаррипоттер": ["videos/v019.mp4"], "волксуоллстрит": ["videos/v020.mp4"], "проектх": ["videos/v021.mp4"], "домстранныхдетей": ["videos/v022.mp4"], "чарлиишоколаднаяфабрика": ["videos/v023.mp4"], "каратепацан": ["videos/v014.mp4", "videos/v024.mp4"], "лунатизм": ["videos/v025.mp4"], "унесённыепризраками": ["videos/v026.mp4"], "из13в30": ["videos/v028.mp4"], "500днейлета": ["videos/v027.mp4"], "простодобавьводы": ["videos/v029.mp4"], "оно": ["videos/v033.mp4"], "останься": ["videos/v030.mp4"], "холоп": ["videos/v034.mp4"]};
 const posterFor=x=>x.img||POSTERS[norm(x.title)]||null;
 const videoFor=x=>{if(x.video)return[x.video];const v=VIDEOS[norm(x.title)];return v?(Array.isArray(v)?v:[v]):[];};
 const plotFor=x=>x.plot||PLOTM[norm(x.title)]||"";
@@ -382,6 +382,7 @@ function migrate(){let changed=false;
     extra.forEach(s=>{if(!have.has(norm(s.title)))data.films.push({id:uid(),title:s.title,year:s.year,rate:s.rate,info:s.info,note:s.note,img:null,ts:Date.now()});});
     data.meta.addV2=true;changed=true;
   }
+  if(!data.meta.descV5){data.meta.subtitle="залетай 🤍 тут всё, что я смотрел, слушал и читал.";data.meta.descV5=true;changed=true;}
   return changed;}
 
 (async function init(){
