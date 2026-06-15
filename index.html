@@ -92,6 +92,7 @@
   #lb .lbchips{display:flex;gap:9px;margin-top:20px;flex-wrap:wrap;justify-content:center}
 
   .hidden{display:none}
+  .view .composer,.view .del{display:none!important}
   .loading{text-align:center;color:var(--muted);padding:40px}
   footer{margin-top:46px;text-align:center;color:#6a5d4c;font-size:12px;letter-spacing:.05em}
   @media(max-width:480px){.thumb,.thumb-e{width:78px;min-width:78px;height:116px}.ttl{font-size:18px}}
@@ -100,7 +101,6 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="kicker">личная коллекция</div>
     <h1 class="title" id="title" contenteditable="true" spellcheck="false">Мой архив</h1>
     <p class="subtitle" id="subtitle" contenteditable="true" spellcheck="false">то, что я смотрю, слушаю и читаю</p>
   </header>
@@ -249,13 +249,13 @@ const NOTES2=[
  {t:"Холоп",n:"Самый адекватный русский фильм."}
 ];
 const NOTEM={};NOTES2.forEach(o=>NOTEM[norm(o.t)]=o.n);
-const VIDEOS={"хорошобытьтихоней": ["videos/v001.mp4"], "бойцовскийклуб": ["videos/v002.mp4"], "мистеримиссиссмит": ["videos/v003.mp4"], "знакомьтесьджоблэк": ["videos/v004.mp4"], "шерлок": ["videos/v005.mp4"], "пиратыкарибскогоморя": ["videos/v006.mp4"], "человекпаук": ["videos/v007.mp4", "videos/v008.mp4"], "страх": ["videos/v009.mp4"], "вейн": ["videos/v010.mp4"], "середина90х": ["videos/v011.mp4"], "мистерробот": ["videos/v012.mp4"], "дневникбаскетболиста": ["videos/v013.mp4"], "титаник": ["videos/v014.mp4"], "моствтерабитию": ["videos/v015.mp4"], "круэлла": ["videos/v016.mp4"], "папеснова17": ["videos/v017.mp4", "videos/v018.mp4"], "гаррипоттер": ["videos/v019.mp4"], "волксуоллстрит": ["videos/v020.mp4"], "проектх": ["videos/v021.mp4"], "домстранныхдетей": ["videos/v022.mp4"], "чарлиишоколаднаяфабрика": ["videos/v023.mp4"], "каратепацан": ["videos/v024.mp4"], "лунатизм": ["videos/v025.mp4"], "унесённыепризраками": ["videos/v026.mp4"]};
+const VIDEOS={"хорошобытьтихоней": ["videos/v001.mp4"], "бойцовскийклуб": ["videos/v002.mp4"], "мистеримиссиссмит": ["videos/v003.mp4"], "знакомьтесьджоблэк": ["videos/v004.mp4"], "шерлок": ["videos/v029.mp4"], "пиратыкарибскогоморя": ["videos/v006.mp4"], "человекпаук": ["videos/v007.mp4", "videos/v008.mp4"], "страх": ["videos/v009.mp4"], "вейн": ["videos/v010.mp4"], "середина90х": ["videos/v011.mp4"], "мистерробот": ["videos/v012.mp4"], "дневникбаскетболиста": ["videos/v013.mp4"], "титаник": ["videos/v032.mp4"], "моствтерабитию": ["videos/v033.mp4"], "круэлла": ["videos/v015.mp4"], "папеснова17": ["videos/v017.mp4", "videos/v018.mp4"], "гаррипоттер": ["videos/v019.mp4"], "волксуоллстрит": ["videos/v020.mp4"], "проектх": ["videos/v021.mp4"], "домстранныхдетей": ["videos/v022.mp4"], "чарлиишоколаднаяфабрика": ["videos/v023.mp4"], "каратепацан": ["videos/v024.mp4"], "лунатизм": ["videos/v025.mp4"], "унесённыепризраками": ["videos/v026.mp4"], "из13в30": ["videos/v027.mp4"], "500днейлета": ["videos/v028.mp4"], "простодобавьводы": ["videos/v030.mp4"], "останься": ["videos/v031.mp4"], "оно": ["videos/v034.mp4"]};
 const posterFor=x=>x.img||POSTERS[norm(x.title)]||null;
 const videoFor=x=>{if(x.video)return[x.video];const v=VIDEOS[norm(x.title)];return v?(Array.isArray(v)?v:[v]):[];};
 const plotFor=x=>x.plot||PLOTM[norm(x.title)]||"";
 
-async function save(){try{await window.storage.set(KEY,JSON.stringify(data),false);}catch(e){alert("Не удалось сохранить (возможно фото слишком большое).");console.error(e);}}
-async function load(){try{const r=await window.storage.get(KEY,false);if(r&&r.value)data=JSON.parse(r.value);}catch(e){}}
+async function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){alert("Не удалось сохранить (возможно фото слишком большое).");console.error(e);}}
+async function load(){try{const r=localStorage.getItem(KEY);if(r)data=JSON.parse(r);}catch(e){}}
 
 function resizeImage(file,maxW=300){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{const sc=Math.min(1,maxW/img.width),w=Math.round(img.width*sc),h=Math.round(img.height*sc);const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);res(c.toDataURL("image/jpeg",0.72));};img.onerror=rej;img.src=fr.result;};fr.onerror=rej;fr.readAsDataURL(file);});}
 function bindPicker(cat,dropId,fileId){const drop=$(dropId),file=$(fileId);drop.addEventListener("click",()=>file.click());file.addEventListener("change",async()=>{const f=file.files[0];if(!f)return;try{const d=await resizeImage(f);pending[cat]=d;drop.innerHTML='<img src="'+d+'" alt="">';}catch(e){alert("Не получилось обработать фото");}});}
@@ -385,11 +385,20 @@ function migrate(){let changed=false;
   return changed;}
 
 (async function init(){
+  const params=new URLSearchParams(location.search);
+  if(params.has("edit"))localStorage.setItem("arch_owner","1");
+  if(params.has("noedit"))localStorage.removeItem("arch_owner");
+  const EDIT=localStorage.getItem("arch_owner")==="1";
   await load();
   if(migrate())await save();
   $("#title").textContent=data.meta.title;$("#subtitle").textContent=data.meta.subtitle;
-  bindEditable($("#title"),"title","Мой архив");bindEditable($("#subtitle"),"subtitle","то, что я смотрю, слушаю и читаю");
-  bindPicker("films","#f-drop","#f-file");bindPicker("music","#m-drop","#m-file");bindPicker("books","#b-drop","#b-file");
+  if(EDIT){
+    bindEditable($("#title"),"title","Мой архив");bindEditable($("#subtitle"),"subtitle","то, что я смотрю, слушаю и читаю");
+    bindPicker("films","#f-drop","#f-file");bindPicker("music","#m-drop","#m-file");bindPicker("books","#b-drop","#b-file");
+  }else{
+    document.body.classList.add("view");
+    $("#title").removeAttribute("contenteditable");$("#subtitle").removeAttribute("contenteditable");
+  }
   renderAll();
   $("#loader").classList.add("hidden");$("#app").classList.remove("hidden");
 })();
